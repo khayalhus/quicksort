@@ -23,31 +23,23 @@ struct entry {
 };
 
 int partition(entry arr[], int l, int r) {
-	int i = l - 1;
+	int i = l;
 
 	int pivot = r;
 
 	for (int j = l; j < r; j++) {
 		if ((arr[j].country).compare(arr[pivot].country) < 0 || ((arr[j].country).compare(arr[pivot].country) == 0 && arr[j].total_profit > arr[pivot].total_profit)) {
-			i++;
 			swap(&arr[i], &arr[j]);
+			i++;
 		}
 	}
-	swap(&arr[i+1], &arr[pivot]);
-	return i+1;
-}
-
-int choosePivot(entry arr[], int l, int r) {
-	int pivot = ((r - l) / 2) + l;
-
-	swap(&arr[pivot], &arr[r]);
-
-	return partition(arr, l, r);
+	swap(&arr[i], &arr[pivot]);
+	return i;
 }
 
 void quicksort(entry arr[], int l, int r) {
 	if(l < r){ 
-		int pivot = choosePivot(arr, l, r);
+		int pivot = partition(arr, l, r);
 		quicksort(arr, l, pivot - 1);  
         quicksort(arr, pivot + 1, r);
 	}
@@ -75,7 +67,17 @@ void print(entry arr[], int N, string header) {
 	outfile.close();
 }
 
-int main(void){
+int main(int argc, char** argv){
+
+	int N;
+
+	if (argc > 1) {
+		N = atoi(argv[1]);
+	} else {
+		N = 100;
+		cout << "N was not specified as an argument" << endl;
+		cout << "Automatically setting N as 100" << endl;
+	}
 	
 	clock_t time_elapsed;
 	clock_t algo_time;
@@ -88,11 +90,6 @@ int main(void){
 		cerr << "File cannot be opened!";
 		exit(1);
 	}
-
-	int N = 0;
-
-	cout << "N: ";
-	cin >> N;
 
 	string line;
 	
@@ -118,7 +115,7 @@ int main(void){
 	//print(country, item_type, order_id, units_sold, total_profit, N);
 	algo_time = clock();
 	quicksort(arr, 0, N-1);
-	cout << "Algo time: " << ( (float (clock() - algo_time) / CLOCKS_PER_SEC)) << endl;
+	cout << "Quicksort algo call took " << algo_time << " clocks or " << ( (float (clock() - algo_time) / CLOCKS_PER_SEC)) << " seconds." << endl;
 	print(arr, N, header);
 
 	delete [] arr;
